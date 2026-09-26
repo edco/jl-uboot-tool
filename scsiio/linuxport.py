@@ -51,7 +51,7 @@ class SCSIDev(SCSIDevBase):
     """
 
     def open(self, path):
-        self.fd = os.open(path, os.O_RDWR)
+        self.fd = os.open(path, os.O_RDWR | os.O_NONBLOCK)
 
         self.is_open = True
 
@@ -67,7 +67,7 @@ class SCSIDev(SCSIDevBase):
         sgio = sg_io_hdr()
         sgio.interface_id = SG_INTERFACE_ID_ORIG
 
-        sgio.timeout = 5000 # TODO ; in milliseconds
+        sgio.timeout = int(os.environ.get('JL_SCSI_TIMEOUT', '600000')) # in milliseconds (default 10 min)
 
         sgio.mx_sb_len = max_sense_len
         sensebuff = ctypes.create_string_buffer(sgio.mx_sb_len)

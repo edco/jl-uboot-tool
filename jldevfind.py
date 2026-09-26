@@ -42,7 +42,7 @@ def find_jl_devices(venfilter=None):
         print(res)
 
         for line in res.split('\n'):
-            words = re.split('\s+', line)
+            words = re.split(r'\s+', line)
             if len(words) < 2: continue
             print(words)
             if words[1] == 'USB':

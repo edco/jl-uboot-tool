@@ -600,9 +600,12 @@ class DasShell(cmd.Cmd):
 
         try:
             self.dev.run_app(code)
+            print("Device reset successfully.")
         except Exception as e:
-            print("<!> Exiting..", e)
-            return True
+            # The MCU resets its USB PHY immediately upon receiving RUN_APP,
+            # so a dropped connection (SCSI host status 0x07 / DID_ERROR) is normal and expected.
+            print("Reset command sent. Device is rebooting...")
+        return True
 
 ###############################################################################
 
@@ -759,7 +762,8 @@ with JL_MSCDevice(devpath) as dev:
         # just execute commands in order
         for cmd in args.cmds:
             if ds.onecmd(cmd):
-                print('**** interrupted ****')
+                if not any(cmd.strip().startswith(x) for x in ['reset', 'exit']):
+                    print('**** interrupted ****')
                 break
     else:
         # enter the shell

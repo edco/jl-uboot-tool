@@ -70,7 +70,9 @@ with JL_MSCDevice(device) as dev:
             mem_write(addr, block)
             addr += len(block)
 
-    #----------------------------------------------------
+    if args.dumpaddr:
+        print("=== Pre-jump memory dump at 0x%08x ===" % args.dumpaddr)
+        hexdump(mem_read(args.dumpaddr, 0x40))
 
     try:
         uboot.mem_jump(args.address, args.arg)
